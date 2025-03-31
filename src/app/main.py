@@ -7,7 +7,6 @@ import os
 from src.app.api.v1.endpoints import users, links
 from src.app.api.deps import get_db
 from src.app.services.url_service import get_url_by_short_code, increment_visits
-from src.app.core.config import settings, logger
 
 app = FastAPI(
     title="Yet Another URL Shortener API",
