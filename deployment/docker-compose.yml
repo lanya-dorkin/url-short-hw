@@ -2,15 +2,15 @@ services:
   postgres:
     image: postgres:15-alpine
     environment:
-      POSTGRES_USER: urlshortener
-      POSTGRES_PASSWORD: urlshortener
-      POSTGRES_DB: urlshortener
+      POSTGRES_USER: ${POSTGRES_USER:-urlshortener}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-urlshortener}
+      POSTGRES_DB: ${POSTGRES_DB:-urlshortener}
     ports:
-      - "5432:5432"
+      - "${POSTGRES_PORT:-5432}:5432"
     volumes:
       - ../data/postgres:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U urlshortener"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-urlshortener}"]
       interval: 5s
       timeout: 5s
       retries: 5
@@ -18,7 +18,7 @@ services:
   redis:
     image: redis:7-alpine
     ports:
-      - "6379:6379"
+      - "${REDIS_PORT:-6379}:6379"
     volumes:
       - ../data/redis:/data
     healthcheck:
@@ -37,11 +37,41 @@ services:
       redis:
         condition: service_healthy
     environment:
-      DATABASE_URL: postgresql://urlshortener:urlshortener@postgres:5432/urlshortener
-      REDIS_URL: redis://redis:6379/0
-      SECRET_KEY: your-secret-key-here
+      DATABASE_URL: postgresql://${POSTGRES_USER:-urlshortener}:${POSTGRES_PASSWORD:-urlshortener}@postgres:${POSTGRES_PORT:-5432}/${POSTGRES_DB:-urlshortener}
+      REDIS_URL: redis://redis:${REDIS_PORT:-6379}/0
+      SECRET_KEY: ${SECRET_KEY:-your-secret-key-here}
+      UNUSED_LINKS_THRESHOLD_DAYS: ${UNUSED_LINKS_THRESHOLD_DAYS:-90}
     ports:
-      - "8000:8000"
+      - "${API_PORT:-8000}:8000"
     volumes:
       - ../src:/app/src
-      - ../tests:/app/tests 
+      
+  cleanup:
+    build:
+      context: ..
+      dockerfile: deployment/Dockerfile
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER:-urlshortener}:${POSTGRES_PASSWORD:-urlshortener}@postgres:${POSTGRES_PORT:-5432}/${POSTGRES_DB:-urlshortener}
+      REDIS_URL: redis://redis:${REDIS_PORT:-6379}/0
+      UNUSED_LINKS_THRESHOLD_DAYS: ${UNUSED_LINKS_THRESHOLD_DAYS:-90}
+    command: >
+      sh -c "sleep 10 && 
+             python -m src.scripts.cleanup_tasks &&
+             echo 'Initial cleanup completed. Setting up recurring cleanup...' &&
+             while true; do
+               sleep 86400;
+               python -m src.scripts.cleanup_tasks;
+             done"
+    restart: always
+    volumes:
+      - ../src:/app/src
+    healthcheck:
+      test: ["CMD", "python", "-c", "import sys; sys.exit(0)"]
+      interval: 30s
+      timeout: 10s
+      retries: 3 
