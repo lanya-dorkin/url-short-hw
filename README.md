@@ -16,8 +16,8 @@
 
 Документация API доступна в двух форматах:
 
-- **Swagger UI**: Интерактивная документация по адресу `http://localhost:8000/docs`
-- **ReDoc**: Альтернативная документация по адресу `http://localhost:8000/redoc`
+- **Swagger UI**: Интерактивная документация по адресу `http://kpop228.isgood.host:8000/docs`
+- **ReDoc**: Альтернативная документация по адресу `http://kpop228.isgood.host:8000/redoc`
 
 Документация включает полную информацию об эндпоинтах, схемах запросов/ответов.
 
@@ -47,7 +47,7 @@
 
 ```bash
 curl -X 'POST' \
-  'http://localhost:8000/api/v1/users/register' \
+  'http://kpop228.isgood.host:8000/api/v1/users/register' \
   -H 'accept: application/json' \
   -H 'Content-Type: application/json' \
   -d '{
@@ -61,7 +61,7 @@ curl -X 'POST' \
 
 ```bash
 curl -X 'POST' \
-  'http://localhost:8000/api/v1/users/login' \
+  'http://kpop228.isgood.host:8000/api/v1/users/login' \
   -H 'accept: application/json' \
   -H 'Content-Type: application/x-www-form-urlencoded' \
   -d 'username=testuser&password=securepassword123'
@@ -71,7 +71,7 @@ curl -X 'POST' \
 
 ```bash
 curl -X 'POST' \
-  'http://localhost:8000/api/v1/links/shorten' \
+  'http://kpop228.isgood.host:8000/api/v1/links/shorten' \
   -H 'accept: application/json' \
   -H 'Authorization: Bearer YOUR_ACCESS_TOKEN' \
   -H 'Content-Type: application/json' \
@@ -85,14 +85,14 @@ curl -X 'POST' \
 ### Перенаправление на исходный URL
 
 ```bash
-curl -L -X 'GET' 'http://localhost:8000/example'
+curl -L -X 'GET' 'http://kpop228.isgood.host:8000/example'
 ```
 
 ### Получение статистики по URL
 
 ```bash
 curl -X 'GET' \
-  'http://localhost:8000/api/v1/links/example/stats' \
+  'http://kpop228.isgood.host:8000/api/v1/links/example/stats' \
   -H 'accept: application/json' \
   -H 'Authorization: Bearer YOUR_ACCESS_TOKEN'
 ```
@@ -101,7 +101,7 @@ curl -X 'GET' \
 
 ```bash
 curl -X 'GET' \
-  'http://localhost:8000/api/v1/links/search?original_url=example.com' \
+  'http://kpop228.isgood.host:8000/api/v1/links/search?original_url=example.com' \
   -H 'accept: application/json'
 ```
 
@@ -109,7 +109,7 @@ curl -X 'GET' \
 
 ```bash
 curl -X 'GET' \
-  'http://localhost:8000/api/v1/links/expired-history?limit=10&offset=0' \
+  'http://kpop228.isgood.host:8000/api/v1/links/expired-history?limit=10&offset=0' \
   -H 'accept: application/json' \
   -H 'Authorization: Bearer YOUR_ACCESS_TOKEN'
 ```
