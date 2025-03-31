@@ -15,6 +15,7 @@ import os
 # Add parent directory to path to allow imports
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "../..")))
 
+from src.app.models.user import User
 from src.app.db.session import get_db
 from src.app.services.url_service import cleanup_expired_urls, cleanup_unused_links
 from src.app.core.config import settings
